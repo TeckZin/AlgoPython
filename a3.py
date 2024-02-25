@@ -5,6 +5,7 @@ import numpy as np
 class convex_hull_problem:
     arrPoints: list[tuple[int, int]] = []
     convexPoint: list[tuple[int, int]] = []
+    finalConvexPoint: list[tuple[int, int]] = []
     lowestX: tuple[int, int] = []
     highestX: tuple[int, int] = []
     lowestY: tuple[int, int] = []
@@ -59,70 +60,279 @@ class convex_hull_problem:
             if (point[1] == self.lowestY or point[1] == self.highestY) and (point not in self.convexPoint):
                 self.convexPoint.append(point)
         self.convexPoint.sort()
-        self.convex_hull_main()
+        answer = self.convex_hull_main()
 
-        print("result: " + str(self.convexPoint))
+        print("result: " + str(answer))
 
     def convex_hull_main(self):
+        currPoint = self.lowestX
 
-        self.arrPoints = self.sort_array(self.arrPoints)
-        print("convexPoints: " + str(self.convexPoint))
+        self.finalConvexPoint.append(currPoint)
 
-        self.convexPoint = self.sort_array(self.convexPoint)
+        topRight = True
+        bottomRight = False
+        bottomLeft = False
+        topLeft = False
+        for i in range(len(self.arrPoints)):
 
-        print("convex: " + str(self.convexPoint))
+            print("--" * 100)
 
-        for point in self.arrPoints:
-            print("-" * 20)
-            print("new point:" + str(point))
+            potentialPoint = []
 
-            top = False
-            bottom = False
-            left = False
-            right = False
+            # print("currPoint: " + str(currPoint))
+            print("convexPoints: " + str(self.finalConvexPoint))
+            print("currPoint: " + str(currPoint))
+            if currPoint != self.highestY or topRight:
+                print("topRight")
+                for point in self.arrPoints:
+                    if point[1] >= currPoint[1]:
 
-            if point not in self.convexPoint:
-                print(self.convexPoint)
-                self.convexPoint.append(point)
-                print(self.convexPoint)
-                self.convexPoint = self.sort_array(self.convexPoint)
-                print(self.convexPoint)
-                index = self.convexPoint.index(point)
-                print(index)
-                flag = True
-                firstPoint = ()
-                secondPoint = ()
-                if index + 1 != len(self.convexPoint):
-                    firstPoint = self.convexPoint[index - 1]
-                    secondPoint = self.convexPoint[index + 1]
-                elif index + 1 == len(self.convexPoint):
-                    firstPoint = self.convexPoint[index - 1]
-                    secondPoint = self.convexPoint[0]
+                        print("point: " + str(point))
+                        if point not in self.finalConvexPoint:
+                            potentialPoint.append(point)
+                            topRight = True
 
-                print(firstPoint, secondPoint)
-                self.convexPoint = self.sort_array(self.convexPoint)
-                print(self.convexPoint)
-# top right
+            if currPoint == self.highestY or bottomRight:
+                print("bottomRight")
+                topRight = False
 
-                # bottom left
-                if firstPoint[0] <= secondPoint[0] and firstPoint[1] <= secondPoint[1]:
-                    # top right
+                for point in self.arrPoints:
 
-                    print("top right")
-                    if firstPoint[1] <= point[1] and secondPoint[0] >= point[0]:
-                        flag = False
-                elif firstPoint[0] <= secondPoint[0] and firstPoint[1] >= secondPoint[1]:
-                    # bottom right
-                    print("bottom right")
-                    if point[0] >= firstPoint[0] and point[1] >= secondPoint[1]:
-                        flag = False
+                    if point[0] >= currPoint[0] and point not in self.finalConvexPoint:
+                        potentialPoint.append(point)
+                        bottomRight = True
 
-                # check the directorion
+            if currPoint == self.highestX or bottomLeft:
+                bottomRight = False
+                print("bottomLeft")
+                potentialPoint = []
+                topRight = False
+                for point in self.arrPoints:
+                    if point[1] <= currPoint[1] and point not in self.finalConvexPoint:
+                        potentialPoint.append(point)
+                        bottomLeft = True
 
-                if flag: self.convexPoint.remove(point)
+            if currPoint == self.lowestY or topLeft:
 
-                print("stage fine: " + str(self.convexPoint))
-        return
+                potentialPoint = []
+                bottomLeft = False
+                print("topLeft")
+                print("currPoint: " + str(currPoint))
+                for point in self.arrPoints:
+                    if point[0] <= currPoint[0]:
+                        print(point)
+                        potentialPoint.append(point)
+                        topLeft = True
+            if currPoint == self.lowestX and len(potentialPoint) == 0:
+                return
+
+            print("potential points: " + str(potentialPoint))
+            if topLeft:
+
+                print("topLeft loop")
+                closetYPoint = [0.0, (0.0, 0.0)]
+                index = 0
+                diffY0 = False
+                diffY0Points = [0.0, (0.0, 0.0)]
+                for point in potentialPoint:
+                    print("point: " + str(point))
+                    diffY = abs(currPoint[1] - point[1])
+
+                    if index == 0:
+                        closetYPoint = [diffY, point]
+                    elif diffY == 0:
+                        diffY0 = True
+                        diffY0Points.append(point)
+                    elif closetYPoint[0] > diffY:
+                        closetYPoint = [diffY, point]
+                    elif closetYPoint[0] == diffY:
+                        diffX1 = abs(closetYPoint[1][0] - currPoint[0])
+                        diffX2 = abs(point[0] - currPoint[0])
+
+                        closetYPoint = [diffY, point] if diffX1 < diffX2 else closetYPoint
+                    print("closetYPoint: " + str(closetYPoint))
+                    index += 1
+
+                j = 0
+
+                if diffY0:
+                    for point in diffY0Points:
+                        diffX = abs(currPoint[0] - currPoint[1])
+                        if j == 0:
+                            closetYPoint = [diffX, point]
+                        elif closetYPoint[0] > diffX:
+                            closetYPoint = [diffX, point]
+
+                    j += 1
+
+                currPoint = closetYPoint[1]
+
+                if currPoint not in self.convexPoint:
+                    self.convexPoint.append(currPoint)
+                    self.finalConvexPoint.append(currPoint)
+                elif currPoint in self.finalConvexPoint and currPoint == self.lowestX:
+                    print("DONE DONE")
+                    print(self.finalConvexPoint)
+                    return self.finalConvexPoint
+                self.arrPoints.remove(currPoint)
+
+
+            elif bottomLeft:
+
+                print("bottomLeft loop")
+                closetXPoint = [0, (0, 0)]
+                index = 0
+                diffX0 = False
+                diffX0Points = [(0, 0)]
+                for point in potentialPoint:
+                    diffX = abs(currPoint[0] - point[0])
+                    if index == 0:
+                        closetXPoint = [diffX, point]
+                    elif diffX == 0:
+                        diffX0 = True
+                        diffX0Points.append(point)
+                    elif closetXPoint[0] > diffX:
+                        closetXPoint = [diffX, point]
+                    elif closetXPoint[0] == diffX:
+                        diffY1 = abs(closetXPoint[1][0] - currPoint[0])
+                        diffY2 = abs(point[0] - currPoint[0])
+
+                        closetXPoint = [diffX, point] if diffY1 < diffY2 else closetXPoint
+                    index += 1
+
+                j = 0
+
+                print("cloestXpoint: " + str(closetXPoint))
+                if diffX0:
+                    for point in diffX0Points:
+                        # print(diffX0Points)
+                        # print(currPoint[1])
+                        # print(point[1])
+                        diffY = abs(currPoint[1] - point[1])
+
+                        if j == 0:
+                            closetXPoint = [diffY, point]
+                        elif closetXPoint[0] > diffY:
+                            closetXPoint = [diffY, point]
+
+                    j += 1
+
+                currPoint = closetXPoint[1]
+
+                if currPoint not in self.finalConvexPoint:
+                    print("APPPEND CON: " + str(currPoint))
+
+                    self.convexPoint.append(currPoint)
+                    self.finalConvexPoint.append(currPoint)
+
+
+                self.arrPoints.remove(currPoint)
+
+
+
+
+            elif bottomRight:
+
+                print("bottomRightLoop")
+
+                closetYPoint = [0.0, (0, 0)]
+                index = 0
+                diffY0 = False
+                diffY0Points = [0, (0, 0)]
+                for point in potentialPoint:
+                    print("point: " + str(point))
+
+                    diffY = abs(currPoint[1] - point[1])
+                    if index == 0:
+                        closetYPoint = [diffY, point]
+                    elif diffY == 0 and point[1] > closetYPoint[1][1]:
+                        diffY0 = True
+                        diffY0Points.append(point)
+                    elif diffY < closetYPoint[0]:
+                        print("here: " + str(point))
+                        closetYPoint = [diffY, point]
+                    elif closetYPoint[0] == diffY:
+                        diffX1 = abs(closetYPoint[1][0] - currPoint[0])
+                        diffX2 = abs(point[0] - currPoint[0])
+
+                        closetYPoint = [diffY, point] if diffX2 < diffX1 else closetYPoint
+
+                    index += 1
+
+                print(closetYPoint)
+                if diffY0:
+                    j = 0
+
+                    for point in diffY0Points:
+                        diffX = abs(point[0] - currPoint[0])
+                        if j == 0:
+                            closetYPoint = [diffX, point]
+                        elif closetYPoint[0] > diffX:
+                            closetYPoint = [diffX, point]
+
+                        j += 1
+
+                currPoint = closetYPoint[1]
+
+                if currPoint not in self.finalConvexPoint:
+                    print("append point: " + str(currPoint))
+                    self.convexPoint.append(currPoint)
+                    self.finalConvexPoint.append(currPoint)
+
+                self.arrPoints.remove(currPoint)
+
+
+            elif topRight:
+                print("topRight loop")
+
+                # check for closest x
+
+                closetXPoint = [0, (0, 0)]
+                diffX0 = False
+                diffX0Points = [(0, 0)]
+                index = 0
+
+                for point in potentialPoint:
+                    diffX = abs(currPoint[0] - point[0])
+
+                    if index == 0:
+                        closetXPoint = [diffX, point]
+
+                    elif diffX == 0:
+                        diffX0 = True
+                        diffX0Points.append(point)
+                    elif diffX < closetXPoint[0]:
+                        closetXPoint = [diffX, point]
+
+
+                    elif closetXPoint[0] == diffX:
+                        diffY1 = abs(closetXPoint[1][0] - currPoint[0])
+                        diffY2 = abs(point[0] - currPoint[0])
+
+                        closetXPoint = [diffX, point] if diffY2 < diffY1 else closetXPoint
+                    index += 1
+                if diffX0:
+                    j = 0
+                    for point in diffX0Points:
+                        diffY = abs(currPoint[1] - point[1])
+                        if j == 0:
+                            closetXPoint = [diffY, point]
+                        elif closetXPoint[1] > diffY:
+                            closetXPoint = [diffY, point]
+                        j += 1
+
+                currPoint = closetXPoint[1]
+
+                if currPoint not in self.finalConvexPoint:
+                    self.convexPoint.append(currPoint)
+                    self.finalConvexPoint.append(currPoint)
+                    print("ADDED CURR POINT:  " + str(currPoint))
+
+                self.arrPoints.remove(currPoint)
+
+        print(self.finalConvexPoint)
+
+        return self.finalConvexPoint
 
     def find_triangle(self, point1, point2, midpoint, targetPoint):
         distancePoint1TargetPoint = self.distance_calulator(point1, targetPoint)
