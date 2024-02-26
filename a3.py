@@ -1,7 +1,21 @@
 import math
 import numpy as np
 
+"""
+the class will take in a list of points 
+and traverse the points clockwise using the most test point 
 
+to achive this the class/algorithm will use the brute force method 
+and check each other with ever other possible points, while implementing some minor optimizations
+
+
+Time Complexity: O()
+Space Complexity: O()
+
+@author: Teck
+@params: arr -> list of 2d points 
+
+"""
 class convex_hull_problem:
     arrPoints: list[tuple[int, int]] = []
     convexPoint: list[tuple[int, int]] = []
@@ -39,10 +53,14 @@ class convex_hull_problem:
                 self.lowestY = point
             index += 1
 
-        print(self.highestX)
-        print(self.highestY)
-        print(self.lowestX)
-        print(self.lowestY)
+        """
+        debugging logs  
+        """
+        #
+        # print(self.highestX)
+        # print(self.highestY)
+        # print(self.lowestX)
+        # print(self.lowestY)
         if len(self.convexPoint) == 0:
 
             if self.highestX not in self.convexPoint:
@@ -62,7 +80,10 @@ class convex_hull_problem:
         self.convexPoint.sort()
         answer = self.convex_hull_main()
 
-        print("result: " + str(answer))
+        """
+        debugging logs  
+        """
+        # print("result: " + str(answer))
 
     def convex_hull_main(self):
         currPoint = self.lowestX
@@ -75,25 +96,40 @@ class convex_hull_problem:
         topLeft = False
         for i in range(len(self.arrPoints)):
 
-            print("--" * 100)
+            """
+            debugging logs  
+            """
+            # print("--" * 100)
 
             potentialPoint = []
 
+            """
+            debugging logs  
+            """
             # print("currPoint: " + str(currPoint))
-            print("convexPoints: " + str(self.finalConvexPoint))
-            print("currPoint: " + str(currPoint))
+            # print("convexPoints: " + str(self.finalConvexPoint))
+            # print("currPoint: " + str(currPoint))
             if currPoint != self.highestY or topRight:
-                print("topRight")
+                """
+                debugging logs  
+                """
+                # print("topRight")
                 for point in self.arrPoints:
                     if point[1] >= currPoint[1]:
 
-                        print("point: " + str(point))
+                        """
+                        debugging logs  
+                        """
+                        # print("point: " + str(point))
                         if point not in self.finalConvexPoint:
                             potentialPoint.append(point)
                             topRight = True
 
             if currPoint == self.highestY or bottomRight:
-                print("bottomRight")
+                """
+                debugging logs  
+                """
+                # print("bottomRight")
                 topRight = False
 
                 for point in self.arrPoints:
@@ -104,7 +140,10 @@ class convex_hull_problem:
 
             if currPoint == self.highestX or bottomLeft:
                 bottomRight = False
-                print("bottomLeft")
+                """
+                debugging logs  
+                """
+                # print("bottomLeft")
                 potentialPoint = []
                 topRight = False
                 for point in self.arrPoints:
@@ -116,8 +155,11 @@ class convex_hull_problem:
 
                 potentialPoint = []
                 bottomLeft = False
-                print("topLeft")
-                print("currPoint: " + str(currPoint))
+                """
+                debugging logs  
+                """
+                # print("topLeft")
+                # print("currPoint: " + str(currPoint))
                 for point in self.arrPoints:
                     if point[0] <= currPoint[0]:
                         print(point)
@@ -126,17 +168,26 @@ class convex_hull_problem:
             if currPoint == self.lowestX and len(potentialPoint) == 0:
                 return
 
-            print("potential points: " + str(potentialPoint))
+            """
+            debugging logs  
+            """
+            # print("potential points: " + str(potentialPoint))
             if topLeft:
 
-                print("topLeft loop")
+                """
+                debugging logs  
+                """
+                # print("topLeft loop")
                 closetYPoint = [0.0, (0.0, 0.0)]
                 index = 0
                 diffY0 = False
                 diffY0Points = [0.0, (0.0, 0.0)]
                 for point in potentialPoint:
-                    print("point: " + str(point))
-                    diffY = abs(currPoint[1] - point[1])
+                    """
+                    debugging logs  
+                    """
+                    # print("point: " + str(point))
+                    diffY = float(abs(currPoint[1] - point[1]))
 
                     if index == 0:
                         closetYPoint = [diffY, point]
@@ -150,7 +201,10 @@ class convex_hull_problem:
                         diffX2 = abs(point[0] - currPoint[0])
 
                         closetYPoint = [diffY, point] if diffX1 < diffX2 else closetYPoint
-                    print("closetYPoint: " + str(closetYPoint))
+                    """
+                    debugging logs  
+                    """
+                    # print("closetYPoint: " + str(closetYPoint))
                     index += 1
 
                 j = 0
@@ -171,15 +225,21 @@ class convex_hull_problem:
                     self.convexPoint.append(currPoint)
                     self.finalConvexPoint.append(currPoint)
                 elif currPoint in self.finalConvexPoint and currPoint == self.lowestX:
-                    print("DONE DONE")
-                    print(self.finalConvexPoint)
+                    """
+                    debugging logs  
+                    """
+                    # print("DONE DONE")
+                    # print(self.finalConvexPoint)
                     return self.finalConvexPoint
                 self.arrPoints.remove(currPoint)
 
 
             elif bottomLeft:
 
-                print("bottomLeft loop")
+                """
+                debugging logs  
+                """
+                # print("bottomLeft loop")
                 closetXPoint = [0, (0, 0)]
                 index = 0
                 diffX0 = False
@@ -202,7 +262,10 @@ class convex_hull_problem:
 
                 j = 0
 
-                print("cloestXpoint: " + str(closetXPoint))
+                """
+                debugging logs  
+                """
+                # print("cloestXpoint: " + str(closetXPoint))
                 if diffX0:
                     for point in diffX0Points:
                         # print(diffX0Points)
@@ -220,7 +283,10 @@ class convex_hull_problem:
                 currPoint = closetXPoint[1]
 
                 if currPoint not in self.finalConvexPoint:
-                    print("APPPEND CON: " + str(currPoint))
+                    """
+                    debugging logs  
+                    """
+                    # print("APPPEND CON: " + str(currPoint))
 
                     self.convexPoint.append(currPoint)
                     self.finalConvexPoint.append(currPoint)
@@ -231,15 +297,21 @@ class convex_hull_problem:
 
 
             elif bottomRight:
+                """
+                debugging logs  
+                """
 
-                print("bottomRightLoop")
+                # print("bottomRightLoop")
 
                 closetYPoint = [0.0, (0, 0)]
                 index = 0
                 diffY0 = False
                 diffY0Points = [0, (0, 0)]
                 for point in potentialPoint:
-                    print("point: " + str(point))
+                    """
+                    debugging logs  
+                    """
+                    # print("point: " + str(point))
 
                     diffY = abs(currPoint[1] - point[1])
                     if index == 0:
@@ -248,7 +320,10 @@ class convex_hull_problem:
                         diffY0 = True
                         diffY0Points.append(point)
                     elif diffY < closetYPoint[0]:
-                        print("here: " + str(point))
+                        """
+                        debugging logs  
+                        """
+                        # print("here: " + str(point))
                         closetYPoint = [diffY, point]
                     elif closetYPoint[0] == diffY:
                         diffX1 = abs(closetYPoint[1][0] - currPoint[0])
@@ -258,7 +333,10 @@ class convex_hull_problem:
 
                     index += 1
 
-                print(closetYPoint)
+                """
+                debugging logs  
+                """
+                # print(closetYPoint)
                 if diffY0:
                     j = 0
 
@@ -274,7 +352,10 @@ class convex_hull_problem:
                 currPoint = closetYPoint[1]
 
                 if currPoint not in self.finalConvexPoint:
-                    print("append point: " + str(currPoint))
+                    """
+                    debugging logs  
+                    """
+                    # print("append point: " + str(currPoint))
                     self.convexPoint.append(currPoint)
                     self.finalConvexPoint.append(currPoint)
 
@@ -282,7 +363,10 @@ class convex_hull_problem:
 
 
             elif topRight:
-                print("topRight loop")
+                """
+                debugging logs  
+                """
+                # print("topRight loop")
 
                 # check for closest x
 
@@ -325,11 +409,17 @@ class convex_hull_problem:
                 if currPoint not in self.finalConvexPoint:
                     self.convexPoint.append(currPoint)
                     self.finalConvexPoint.append(currPoint)
-                    print("ADDED CURR POINT:  " + str(currPoint))
+                    """
+                    debugging logs  
+                    """
+                    # print("ADDED CURR POINT:  " + str(currPoint))
 
                 self.arrPoints.remove(currPoint)
 
-        print(self.finalConvexPoint)
+        """
+        debugging logs  
+        """
+        # print(self.finalConvexPoint)
 
         return self.finalConvexPoint
 
@@ -367,7 +457,6 @@ class DFS:
                 self.dfs(w, count)
 
 
-
 class BFS:
     arr: dict[int: list[int, list[int]]] = {0: []}
 
@@ -381,6 +470,7 @@ class BFS:
 
         for v in V:
             print(self.arr[v])
+
     def bfs(self, v, count):
         count += 1
         queue = []
@@ -392,7 +482,6 @@ class BFS:
                     self.arr[w][0] = count
                     queue.append(w)
             queue.pop()
-
 
 
 # bfsArr = [(1, 2), (2, 3), (3, 4), (4, 3)]
