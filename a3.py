@@ -367,10 +367,32 @@ class DFS:
                 self.dfs(w, count)
 
 
-def bfs(arr: list[tuple[int, int]]):
-    for x in arr:
-        print(x)
-    return
+
+class BFS:
+    arr: dict[int: list[int, list[int]]] = {0: []}
+
+    def __init__(self, arr: dict[int: list[int, list[int]]]):
+        self.arr = arr
+        count = 0
+        V = self.arr.keys()
+        for v in V:
+            if self.arr[v][0] == 0:
+                self.bfs(v, count)
+
+        for v in V:
+            print(self.arr[v])
+    def bfs(self, v, count):
+        count += 1
+        queue = []
+        self.arr[v][0] = count
+        while len(queue) != 0:
+            for w in self.arr[v][1]:
+                if self.arr[w][0] == 0:
+                    count += 1
+                    self.arr[w][0] = count
+                    queue.append(w)
+            queue.pop()
+
 
 
 # bfsArr = [(1, 2), (2, 3), (3, 4), (4, 3)]
@@ -400,4 +422,7 @@ conex_arr = [(7, 7),
 
 dfs_arr = {0: [0, [1, 2, 3]], 1: [0, [0]], 2: [0, [0, 3, 4]], 3: [0, [0, 2]], 4: [0, [2]]}
 
-DFS(dfs_arr)
+bfs_arr = {0: [0, [1, 2, 3]], 1: [0, [0]], 2: [0, [0, 3, 4]], 3: [0, [0, 2]], 4: [0, [2]]}
+# DFS(dfs_arr)
+
+BFS(bfs_arr)
