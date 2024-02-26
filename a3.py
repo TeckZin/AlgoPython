@@ -225,7 +225,6 @@ class convex_hull_problem:
                     self.convexPoint.append(currPoint)
                     self.finalConvexPoint.append(currPoint)
 
-
                 self.arrPoints.remove(currPoint)
 
 
@@ -334,10 +333,67 @@ class convex_hull_problem:
 
         return self.finalConvexPoint
 
-def dfs():
-    return
+
+class DFS:
+    arr: dict[int: list[int]] = {0: []}
+
+    def __init__(self, arr: dict[int: list[int]]):
+        self.arr = arr
+        self.dfs_main()
+
+    def dfs_main(self):
+
+        stack = []
+        visited = []
+
+        currNode = list(self.arr.keys())[0]
 
 
+        print(len(self.arr))
+
+        i = 0
+
+        while len(visited) != len(self.arr):
+
+            print("--" * 100)
+
+            print("CurrNode: " + str(currNode))
+            print("Stack: " + str(stack))
+            print("Visited: " + str(visited))
+
+
+
+            if i == 0:
+
+                options = self.arr[currNode]
+                visited.append(currNode)
+
+                for option in options:
+                    stack.append(option)
+
+                visited.reverse()
+                stack.reverse()
+            else:
+                visitNext = stack[0]
+                if visitNext in self.arr[currNode]:
+                    currNode = stack.pop()
+                    options = self.arr[currNode]
+
+
+                    for option in options:
+                        if option not in visited and option not in stack:
+                            stack.append(option)
+                    visited.append(currNode)
+
+
+                else:
+                    print("backtrack")
+                    index = visited.index(currNode)
+                    currNode = visited[index -1]
+            i += 1
+
+
+        print(visited)
 def bfs(arr: list[tuple[int, int]]):
     for x in arr:
         print(x)
@@ -367,4 +423,8 @@ conex_arr = [(7, 7),
              (6, 7),
              (1, 3)]
 
-convex_hull_problem(conex_arr)
+# convex_hull_problem(conex_arr)
+
+dfs_arr = {0: [1, 2, 3], 1: [0], 2: [0, 3, 4], 3: [0, 2], 4: [2]}
+
+DFS(dfs_arr)
