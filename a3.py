@@ -335,68 +335,39 @@ class convex_hull_problem:
 
 
 class DFS:
-    arr: dict[int: list[int]] = {0: []}
+    arr: dict[int: list[int, list[int]]] = {0: []}
 
-    def __init__(self, arr: dict[int: list[int]]):
+    def __init__(self, arr: dict[int: list[int, list[int]]]):
         self.arr = arr
         self.dfs_main()
 
     def dfs_main(self):
 
-        stack = []
-        visited = []
+        count = 0
 
-        currNode = list(self.arr.keys())[0]
+        V = self.arr.keys()
+        print(V)
 
+        # print(self.arr[0][0])
+        for vertex in V:
+            if self.arr[vertex][0] == 0:
+                self.dfs(vertex, count)
+            # print(vertex)
 
-        print(len(self.arr))
+        for vertex in V:
+            print(self.arr[vertex])
 
-        i = 0
+    def dfs(self, vertex, count):
+        count += 1
+        self.arr[vertex][0] = count
 
-        while len(visited) != len(self.arr):
-
-            print("--" * 100)
-
-            print("CurrNode: " + str(currNode))
-            print("Stack: " + str(stack))
-            print("Visited: " + str(visited))
-
-
-
-            if i == 0:
-
-                options = self.arr[currNode]
-                visited.append(currNode)
-
-                for option in options:
-                    stack.append(option)
-
-                visited.reverse()
-                stack.reverse()
-            else:
-                visitNext = stack[0]
-                if visitNext in self.arr[currNode]:
-                    currNode = stack.pop()
-                    options = self.arr[currNode]
+        adjacent = self.arr[vertex][1]
+        for w in adjacent:
+            if self.arr[w][0] == 0:
+                self.dfs(w, count)
 
 
-                    for option in options:
-                        if option not in visited and option not in stack:
-                            stack.append(option)
-                    visited.append(currNode)
-
-
-                else:
-                    print("backtrack")
-                    index = visited.index(currNode)
-                    currNode = visited[index -1]
-            i += 1
-
-
-        print(visited)
 def bfs(arr: list[tuple[int, int]]):
-
-
     for x in arr:
         print(x)
     return
@@ -427,6 +398,6 @@ conex_arr = [(7, 7),
 
 # convex_hull_problem(conex_arr)
 
-dfs_arr = {0: [1, 2, 3], 1: [0], 2: [0, 3, 4], 3: [0, 2], 4: [2]}
+dfs_arr = {0: [0, [1, 2, 3]], 1: [0, [0]], 2: [0, [0, 3, 4]], 3: [0, [0, 2]], 4: [0, [2]]}
 
 DFS(dfs_arr)
