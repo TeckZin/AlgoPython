@@ -395,6 +395,8 @@ class DFS:
 
         print(visited)
 def bfs(arr: list[tuple[int, int]]):
+
+
     for x in arr:
         print(x)
     return
